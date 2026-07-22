@@ -4,28 +4,29 @@
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│  Chrome Extension Popup (380x600)                        │
-│                                                          │
-│  ┌──────────┐  ┌────────────────────────┐               │
-│  │ Header   │  │ 🔗 Bio | ✨ Dest | 😀 Emoji │  ← chips  │
-│  │ + avatar │  └────────────────────────┘               │
-│  └──────────┘                                            │
-│                                                          │
-│  ┌──────────────────────────────────────┐               │
-│  │ [bubble] [bubble] [bubble]           │  ← scroll    │
-│  │ [bubble] [bubble]                    │               │
-│  │ [bubble] [bubble] [bubble]           │               │
-│  │              [bubble]                │               │
-│  └──────────────────────────────────────┘               │
-│                                                          │
-│  [+] Agregar                            [🎲] Generar    │
+│  Chrome Browser                                         │
+│  ┌──────────┬───────────────────────────────┐         │
+│  │ IG page  │  Side Panel (Banco Resp.)       │         │
+│  │ (main)   │  ┌──────────────────────┐     │         │
+│  │          │  │ Header + avatar       │     │         │
+│  │ Reels/   │  ├──────────────────────┤     │         │
+│  │ Coment.  │  │ Tabs: Global/Fav      │     │         │
+│  │          │  ├──────────────────────┤     │         │
+│  │          │  │ Categories            │     │         │
+│  │          │  ├──────────────────────┤     │         │
+│  │          │  │ [bubble] [bubble]    │     │         │
+│  │          │  │ [bubble] [bubble]    │     │         │
+│  │          │  ├──────────────────────┤     │         │
+│  │          │  │ [+] Agregar    [🎲]  │     │         │
+│  │          │  └──────────────────────┘     │         │
+│  └──────────┴───────────────────────────────┘         │
 └─────────────────────────────────────────────────────────┘
           │
-          ▼ chrome.runtime
+          ▼ chrome.runtime + chrome.sidePanel
           │
 ┌─────────────────────────────────────────────────────────┐
-│  Service Worker (background)                              │
-│  - Maneja chrome.runtime.openOptionsPage()                │
+│  Service Worker (background.js)                          │
+│  - Configura openPanelOnActionClick: true                │
 │  - Sin lógica de negocio                                 │
 └─────────────────────────────────────────────────────────┘
           │
@@ -57,11 +58,12 @@
 
 ```
 BancoDeRespuestas/
-├── manifest.json              ← MV3, permisos: storage + clipboardWrite
+├── manifest.json              ← MV3 con side_panel + background + storage + clipboardWrite
 ├── config.js                  ← URL + anon key (cada uno tiene el suyo)
+├── background.js              ← Service worker: openPanelOnActionClick
 │
-├── popup.html                 ← Interfaz principal
-├── popup.css                  ← Estilos (variables CSS, dark mode)
+├── popup.html                 ← Interfaz principal (cargada en side panel)
+├── popup.css                  ← Estilos (variables CSS, dark mode, flexible sizing)
 ├── popup.js                   ← Lógica: auth, render, dado, drag&drop, favs
 │
 ├── options.html               ← Configuración (admin-only en gran parte)
@@ -185,6 +187,7 @@ Antes de cada add (manual o batch):
 
 ## Decisiones técnicas
 
+- **Chrome Side Panel API** (v0.2.0+): el panel queda fijo mientras navegás Instagram, no se cierra al hacer click fuera
 - **Vanilla JS**: cero build step, archivo .js listo para cargar
 - **chrome.storage.local** en vez de localStorage: persiste sesión aunque limpien cookies
 - **Supabase JS bundled local**: evita problemas de CSP en Manifest V3
@@ -196,9 +199,9 @@ Antes de cada add (manual o batch):
 
 - **Teams**: complejidad de RLS no compensaba el valor para el caso de uso
 - **Infinite scroll**: con ~60 respuestas y 18 visibles, no aporta
-- **Service worker**: no hay lógica background que lo justifique
 - **Auto-update desde GitHub**: requiere Chrome Web Store o hosting CRX
 - **Tests automatizados**: cero por ahora, prioridad baja
 - **CI/CD**: manual por ahora
 - **Internacionalización**: solo español
 - **Sincronización offline**: las respuestas se cargan al inicio, no hay sync
+- **Firefox/Safari**: el Side Panel API no es estándar, solo Chromium-based

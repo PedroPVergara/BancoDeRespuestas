@@ -7,11 +7,13 @@ Extensión Chrome/Chromium para responder comentarios en Instagram de manera rá
 **Versión**: 0.1.0 (en desarrollo activo)
 
 **Stack**:
-- Chrome Extension Manifest V3
+- Chrome Extension Manifest V3 con **Side Panel API** (v0.2.0+)
 - Supabase (Postgres + Auth + RLS) — free tier
 - Vanilla JavaScript (sin build step)
-- Picmo desinstalado, emoji picker custom hecho a mano
+- Emoji picker custom hecho a mano (351 emojis curados)
 - Almacenamiento de sesión: `chrome.storage.local`
+
+**Compatibilidad**: Chrome 114+, Edge 114+, Brave, Opera, Vivaldi, Arc (todos Chromium-based). NO Firefox ni Safari.
 
 **Usuario admin**: `pedro.poncevergara@gmail.com` (único actualmente, puede crear más)
 
@@ -19,6 +21,7 @@ Extensión Chrome/Chromium para responder comentarios en Instagram de manera rá
 
 | Feature | Estado |
 |---------|--------|
+| **Chrome Side Panel** (queda fijo al costado) | ✅ v0.2.0 |
 | Auth con email/password | ✅ |
 | Login persistente (no se ve al reabrir) | ✅ |
 | Banco de respuestas coquetas (seed curado, mayoría preguntas) | ✅ |
@@ -26,19 +29,18 @@ Extensión Chrome/Chromium para responder comentarios en Instagram de manera rá
 | Drag & drop entre tabs | ✅ |
 | Estrella en cada burbuja para toggle fav | ✅ |
 | Auto-fav al agregar respuestas manuales | ✅ |
-| Scroll en contenedor de burbujas | ✅ |
-| Burbujas que caben en viewport, sin overflow | ✅ |
 | Botón 🎲 genera 50% DB + 50% random | ✅ |
 | Emoji picker custom estilo WhatsApp (max 4 por respuesta) | ✅ |
 | Modal agregar con texto o solo emojis | ✅ |
 | Multi-emojis (concatenados en el campo emoji) | ✅ |
-| Categorías: Todo / ? / Bio / Dest / Emoji (con conteo) | ❌ (quité los counts) |
+| Categorías: Todo / ❓? / Bio / Dest / Emoji | ✅ |
 | Admin puede gestionar usuarios (suspender, role) | ✅ |
 | Refresh seed automático limpia términos prohibidos | ✅ |
 | Auto-cleanup DB: 15 días o 50k respuestas | ✅ |
 | Generador IA (MiniMax, OpenAI, Anthropic) | ✅ (opcional) |
-| Teams (Nexafans, etc.) | ❌ Removido |
-| Admin solo: panel de favoritos de usuarios | ✅ |
+| Admin: panel de favoritos de usuarios | ✅ |
+| Users normales sin acceso a Configuración | ✅ |
+| Teams | ❌ Removido |
 
 ## Reglas de negocio (CRÍTICAS)
 

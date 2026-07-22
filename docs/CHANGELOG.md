@@ -1,6 +1,31 @@
 # Changelog
 
-## v0.1.0 (en desarrollo)
+## v0.2.0 (side panel)
+
+### Features nuevas
+
+- ✅ **Chrome Side Panel**: la extensión ahora se abre como panel lateral fijo en vez de popup
+  - Click en el icono → abre el panel al costado de la ventana
+  - El panel queda visible mientras navegás Instagram
+  - No se cierra al hacer click fuera
+  - Mantiene foco en las burbujas
+
+### Cambios técnicos
+
+- `manifest.json`: removido `action.default_popup`, agregado `side_panel.default_path` y `background.service_worker`
+- Nuevo `background.js` (service worker) que configura `openPanelOnActionClick: true`
+- `popup.css`: body pasa de `width:380px; height:600px` (fijo) a `width:100%; min-height:100vh` (flexible)
+- Permiso `sidePanel` agregado
+- v0.2.0 → `background.service_worker` agregado
+
+### Compatibilidad
+
+- ✅ Chrome 114+ (mayo 2023) — recomendado
+- ✅ Edge 114+, Brave 1.52+, Opera 100+, Vivaldi, Arc (todos Chromium-based)
+- ❌ Firefox: no tiene Side Panel API
+- ❌ Safari: soporte limitado
+
+## v0.1.0 (popup inicial)
 
 ### Features iniciales
 
@@ -58,7 +83,7 @@
 
 ### Iteraciones clave
 
-1. **v0.1.0-alpha**: setup inicial, auth, banco básico
+1. **v0.1.0-alpha**: setup inicial, auth, banco básico (popup)
 2. **v0.1.0-beta1**: emoji picker con picmo
 3. **v0.1.0-beta2**: reemplazado picmo con picker custom WhatsApp-style
 4. **v0.1.0-beta3**: bug fix scroll (sentinel)
@@ -69,6 +94,7 @@
 9. **v0.1.0-rc3**: sistema de favoritos con drag & drop entre tabs
 10. **v0.1.0**: reset completo del banco, mayoría preguntas, redirecciones con conectores
 11. **v0.1.0-final**: users normales sin acceso a Configuración
+12. **v0.2.0**: migrado de popup a Chrome Side Panel
 
 ## Próximas features (ideas)
 

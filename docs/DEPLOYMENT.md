@@ -16,22 +16,61 @@ Razones:
 - SQL migrations en el repo te dan versionado de schema
 - `docs/` queda todo junto
 
-### Estructura propuesta del repo
+### Estructura del repo
 
 ```
-BancoDeRespuestas/                    ← Repo raíz
+BancoDeRespuestas/                    ← Repo raíz (todo al mismo nivel)
 ├── .git/                              ← Histórico git
-├── .gitignore                         ← Ignora basura
-├── BancoDeRespuestas/                ← Archivos de la extensión
-│   ├── manifest.json
-│   ├── config.js
-│   ├── popup.html/css/js
-│   ├── options.html/css/js
-│   ├── lib/
-│   ├── icons/
-│   └── docs/                          ← Documentación
-│       ├── README.md
-│       ├── SETUP.md
+├── .gitignore                         ← Ignora dist/ y *.zip
+├── build.ps1                          ← Script para generar .zip
+├── README.md                          ← Overview corto
+├── manifest.json                      ← Config MV3 (incluye side_panel)
+├── config.js                          ← Credenciales Supabase
+├── background.js                      ← Service worker para side panel
+├── popup.html / .css / .js           ← UI principal (side panel content)
+├── options.html / .css / .js         ← Configuración (admin)
+├── lib/
+│   ├── supabase.min.js
+│   ├── emojis.js                      ← Picker emojis custom (351 emojis)
+│   ├── ui.js                          ← Helpers (toast, copy, escape)
+│   ├── store.js                       ← CRUD + auth + admin
+│   ├── SETUP_COMPLETO.sql             ← Para correr 1 vez en Supabase nuevo
+│   └── RESET_TODO.sql                 ← Para wipear todo
+├── icons/
+├── docs/                              ← Documentación
+│   ├── README.md
+│   ├── SETUP.md
+│   ├── ARCHITECTURE.md
+│   ├── CONVENTIONS.md
+│   ├── DEPLOYMENT.md                  ← Este archivo
+│   └── CHANGELOG.md
+└── dist/                              ← (gitignored) zips de distribución
+```
+
+## Chrome Side Panel (v0.2.0+)
+
+Desde v0.2.0, la extensión usa **Chrome Side Panel API** en lugar del popup clásico. Esto significa:
+
+- Click en el icono 💬 → abre un **panel lateral fijo** (no un popup)
+- El panel **queda visible** mientras navegás Instagram
+- **No se cierra** al hacer click fuera (solo con la X del panel)
+- Mantiene foco en las burbujas
+
+### Compatibilidad de navegadores
+
+| Navegador | Soporta Side Panel |
+|-----------|-------------------|
+| Chrome 114+ (mayo 2023) | ✅ |
+| Edge 114+ | ✅ |
+| Brave, Opera, Vivaldi, Arc | ✅ (todos Chromium-based) |
+| Firefox | ❌ (no tiene Side Panel API) |
+| Safari | ❌ (soporte limitado) |
+
+**Distribución aproximada**: ~98% de users de Chrome tienen versión 114+ (a 2026).
+
+### Verificar versión
+
+En `chrome://version/` → si dice 114 o más, está OK.
 │       ├── ARCHITECTURE.md
 │       ├── CONVENTIONS.md
 │       ├── DEPLOYMENT.md              ← Este archivo
@@ -98,28 +137,26 @@ O alternativamente, incluís el config.js en el .zip (ya que las credenciales so
 
 ## Script para crear el .zip de distribución
 
-Podés agregar un `package.json` o un script bash:
+El repo incluye `build.ps1` (PowerShell) que genera el .zip correctamente con la estructura de carpetas preservada:
 
-### `build.sh` (opcional)
-
-```bash
-#!/bin/bash
-# Crea el zip de distribución sin archivos de desarrollo
-cd "$(dirname "$0")"
-
-zip -r BancoDeRespuestas-v0.1.0.zip BancoDeRespuestas/ \
-  -x "BancoDeRespuestas/.git/*" \
-  -x "BancoDeRespuestas/docs/*" \
-  -x "BancoDeRespuestas/*.md"
+```powershell
+.\build.ps1 -Version "v0.2.0"
+# Genera dist\BancoDeRespuestas-v0.2.0.zip
 ```
+
+**Para Windows**, abrí PowerShell en la carpeta del proyecto y corré el comando.
+
+**Para Mac/Linux**, se puede adaptar a un script bash equivalente usando `zip -r` excluyendo `.git/`, `docs/`, `dist/` y `*.zip`.
 
 ### Manual (lo más simple)
 
-En Windows:
-1. Click derecho en la carpeta `BancoDeRespuestas/`
+Si no querés usar el script, en Windows:
+1. Click derecho en la carpeta del proyecto (sin `.git/`, `docs/`, `dist/`)
 2. "Enviar a" → "Carpeta comprimida"
 3. Renombrar a `BancoDeRespuestas-v0.X.X.zip`
 4. Subir a GitHub Releases
+
+⚠️ **Importante**: si comprimís manualmente la carpeta `BancoDeRespuestas/`, el zip va a tener un nivel extra de carpeta. Chrome puede manejar esto pero es mejor usar `build.ps1` para que el zip tenga los archivos en la raíz.
 
 ### `.gitignore` sugerido
 
