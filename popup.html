@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Banco de Respuestas</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <!-- Loading inicial — se muestra mientras se chequea la sesión -->
+  <div id="br-loading" class="br-loading">
+    <div class="br-loading__dot"></div>
+    <div class="br-loading__dot"></div>
+    <div class="br-loading__dot"></div>
+  </div>
+
+  <div id="br-root" class="br-hidden">
+
+    <!-- ============ AUTH VIEW ============ -->
+    <section id="br-auth" class="br-view br-auth br-hidden">
+      <div class="br-auth__brand">
+        <div class="br-auth__logo">💬</div>
+        <h1>Banco de Respuestas</h1>
+        <p>Tu biblioteca personal de respuestas cortas</p>
+      </div>
+
+      <div class="br-tabs">
+        <button class="br-tab br-tab--active" data-tab="login" type="button">Entrar</button>
+        <button class="br-tab" data-tab="signup" type="button">Crear cuenta</button>
+      </div>
+
+      <form id="br-login" class="br-form" autocomplete="on">
+        <label>
+          <span>Email</span>
+          <input type="email" name="email" required autocomplete="email" placeholder="vos@email.com">
+        </label>
+        <label>
+          <span>Contraseña</span>
+          <input type="password" name="password" required autocomplete="current-password" placeholder="••••••••" minlength="6">
+        </label>
+        <button type="submit" class="br-btn br-btn--primary">Entrar</button>
+        <div class="br-error" data-error></div>
+      </form>
+
+      <form id="br-signup" class="br-form br-hidden" autocomplete="on">
+        <label>
+          <span>Nombre</span>
+          <input type="text" name="displayName" required autocomplete="nickname" placeholder="Tu nombre" maxlength="32">
+        </label>
+        <label>
+          <span>Email</span>
+          <input type="email" name="email" required autocomplete="email" placeholder="vos@email.com">
+        </label>
+        <label>
+          <span>Contraseña</span>
+          <input type="password" name="password" required autocomplete="new-password" placeholder="Mínimo 6 caracteres" minlength="6">
+        </label>
+        <button type="submit" class="br-btn br-btn--primary">Crear cuenta</button>
+        <div class="br-error" data-error></div>
+      </form>
+
+      <div class="br-auth__foot">
+        <small>Datos sincronizados en la nube ☁️</small>
+      </div>
+    </section>
+
+    <!-- ============ MAIN VIEW ============ -->
+    <section id="br-main" class="br-view br-main br-hidden">
+      <header class="br-header">
+        <div class="br-header__brand">
+          <span class="br-header__logo">💬</span>
+          <span class="br-header__title">Banco</span>
+          <span id="br-admin-badge" class="br-admin-badge br-hidden">ADMIN</span>
+        </div>
+        <button class="br-avatar" id="br-avatar" type="button" title="Menú">
+          <span id="br-avatar-letter">?</span>
+        </button>
+      </header>
+
+      <div class="br-tabs-row">
+        <button type="button" class="br-tab-btn br-tab-btn--active" data-tab="all" id="br-tab-all">
+          <span>🌐 Global</span>
+        </button>
+        <button type="button" class="br-tab-btn" data-tab="favorites" id="br-tab-favorites">
+          <span>⭐ Favoritos</span>
+          <span class="br-tab-count" id="br-tab-count-fav">0</span>
+        </button>
+      </div>
+
+      <div class="br-cats-row" id="br-cats-row">
+        <!-- chips generados por JS -->
+      </div>
+
+      <div id="br-bubbles" class="br-bubbles" aria-live="polite"></div>
+
+      <div class="br-fabbar">
+        <button class="br-fab br-fab--add" id="br-add" type="button" title="Agregar respuesta">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+        </button>
+        <button class="br-fab br-fab--dice" id="br-dice" type="button" title="Nuevo lote aleatorio">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="3"></rect>
+            <circle cx="8" cy="8" r="1.2" fill="currentColor"></circle>
+            <circle cx="16" cy="8" r="1.2" fill="currentColor"></circle>
+            <circle cx="12" cy="12" r="1.2" fill="currentColor"></circle>
+            <circle cx="8" cy="16" r="1.2" fill="currentColor"></circle>
+            <circle cx="16" cy="16" r="1.2" fill="currentColor"></circle>
+          </svg>
+        </button>
+      </div>
+
+      <div id="br-menu" class="br-menu br-hidden" role="menu">
+        <button data-action="settings" type="button" role="menuitem" id="br-menu-settings">
+          <span>⚙️</span> Configuración
+        </button>
+        <button data-action="add" type="button" role="menuitem">
+          <span>➕</span> Agregar respuesta
+        </button>
+        <div class="br-menu__sep"></div>
+        <button data-action="logout" type="button" role="menuitem" class="br-menu__danger">
+          <span>🚪</span> Cerrar sesión
+        </button>
+      </div>
+    </section>
+
+    <!-- ============ ADD MODAL ============ -->
+    <div id="br-modal" class="br-modal br-hidden" role="dialog" aria-modal="true">
+      <div class="br-modal__backdrop" data-close></div>
+      <div class="br-modal__panel">
+        <h3>Nueva respuesta</h3>
+        <form id="br-add-form" class="br-form">
+          <label>
+            <span>Texto</span>
+            <div class="br-input-wrap">
+              <input type="text" name="text" maxlength="80" placeholder="Texto o solo emojis →" autofocus>
+              <button type="button" class="br-emoji-trigger" id="br-emoji-toggle" title="Elegir emojis" aria-label="Elegir emojis">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+                  <line x1="9" y1="9" x2="9.01" y2="9"></line>
+                  <line x1="15" y1="9" x2="15.01" y2="9"></line>
+                </svg>
+              </button>
+            </div>
+          </label>
+
+          <div class="br-selected-row">
+            <span class="br-selected-label">Emojis:</span>
+            <div class="br-selected-emojis" id="br-selected-emojis">
+              <span class="br-selected-empty">Ninguno</span>
+            </div>
+          </div>
+
+          <div class="br-modal__actions">
+            <button type="button" class="br-btn br-btn--ghost" data-close>Cancelar</button>
+            <button type="submit" class="br-btn br-btn--primary">Guardar</button>
+          </div>
+          <div class="br-error" data-error></div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ============ EMOJI PICKER MODAL (WhatsApp-style custom) ============ -->
+    <div id="br-emoji-modal" class="br-modal br-hidden" role="dialog" aria-modal="true" aria-label="Selector de emojis">
+      <div class="br-modal__backdrop" data-emoji-close></div>
+      <div class="br-modal__panel br-emoji-panel">
+        <div class="br-emoji-panel__header">
+          <h3>Elegí tus emojis</h3>
+          <span class="br-emoji-counter" id="br-emoji-counter">0 seleccionados</span>
+        </div>
+        <div class="br-emoji-search-wrap">
+          <svg class="br-emoji-search-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" id="br-emoji-search" placeholder="Buscar emoji..." autocomplete="off">
+          <button type="button" class="br-emoji-search-clear br-hidden" id="br-emoji-search-clear" aria-label="Limpiar">×</button>
+        </div>
+        <div class="br-emoji-grid" id="br-emoji-grid"></div>
+        <div class="br-emoji-categories" id="br-emoji-categories"></div>
+        <div class="br-modal__actions">
+          <button type="button" class="br-btn br-btn--ghost" data-emoji-close>Cancelar</button>
+          <button type="button" class="br-btn br-btn--primary" id="br-emoji-accept">✓ Aceptar</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="lib/supabase.min.js"></script>
+  <script src="config.js"></script>
+  <script src="lib/store.js"></script>
+  <script src="lib/ui.js"></script>
+  <script src="lib/emojis.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

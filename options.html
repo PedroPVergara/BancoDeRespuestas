@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Configuración — Banco de Respuestas</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div class="opt-wrap">
+    <header class="opt-header">
+      <div class="opt-header__brand">
+        <span class="opt-header__logo">💬</span>
+        <h1>Banco de Respuestas</h1>
+      </div>
+      <div class="opt-header__user">
+        <div class="opt-avatar" id="opt-avatar">?</div>
+        <div>
+          <div class="opt-header__name" id="opt-name">—</div>
+          <div class="opt-header__email" id="opt-email">—</div>
+        </div>
+      </div>
+    </header>
+
+    <main class="opt-main">
+
+      <!-- ============ PERFIL ============ -->
+      <section class="opt-card" id="opt-profile-card">
+        <h2>Tu perfil</h2>
+        <form id="opt-profile" class="opt-form">
+          <label>
+            <span>Nombre visible</span>
+            <input type="text" name="displayName" maxlength="32" placeholder="Tu nombre">
+          </label>
+          <div class="opt-row">
+            <button type="submit" class="opt-btn opt-btn--primary">Guardar</button>
+            <span class="opt-success" data-success></span>
+          </div>
+        </form>
+      </section>
+
+      <!-- ============ ADMIN ONLY ============ -->
+      <div id="opt-admin" class="br-hidden">
+
+        <!-- Favoritos de usuarios -->
+        <section class="opt-card">
+          <h2>⭐ Favoritos de usuarios <span class="opt-badge">ADMIN</span></h2>
+          <p class="opt-help">Ver qué respuestas marcó como favoritas cada usuario.</p>
+          <div class="opt-row" style="margin-bottom: 12px;">
+            <select id="opt-fav-user-select" style="flex: 1;">
+              <option value="">Seleccionar usuario...</option>
+            </select>
+          </div>
+          <div id="opt-fav-list" class="opt-fav-list">
+            <div class="opt-gen__status">Seleccioná un usuario para ver sus favoritos.</div>
+          </div>
+        </section>
+
+        <!-- Users -->
+        <section class="opt-card">
+          <h2>👥 Usuarios <span class="opt-badge">ADMIN</span></h2>
+          <p class="opt-help">
+            Gestioná los usuarios del sistema. Podés ascender a admin, suspender
+            (bloquear acceso) o reactivar cuentas.
+          </p>
+          <div class="opt-users" id="opt-users">
+            <div class="opt-gen__status">Cargando usuarios…</div>
+          </div>
+        </section>
+
+        <!-- Refresh seed -->
+        <section class="opt-card">
+          <h2>🔧 Mantenimiento <span class="opt-badge">ADMIN</span></h2>
+          <p class="opt-help">
+            Refrescá el banco de respuestas seed. Borra las respuestas automáticas
+            y las palabras, y las vuelve a insertar. <strong>Tus respuestas manuales se conservan.</strong>
+          </p>
+          <div class="opt-row">
+            <button type="button" class="opt-btn opt-btn--accent" id="opt-refresh-seed">♻️ Refrescar banco seed</button>
+            <span class="opt-gen__status" id="opt-refresh-status"></span>
+          </div>
+        </section>
+
+        <!-- IA -->
+        <section class="opt-card">
+          <h2>🤖 Generador IA <span class="opt-badge">ADMIN</span></h2>
+          <p class="opt-help">
+            Configurá tu API key para generar respuestas automáticamente con IA.
+          </p>
+          <form id="opt-ai" class="opt-form">
+            <label>
+              <span>Proveedor</span>
+              <select name="aiProvider">
+                <option value="minimax">MiniMax</option>
+                <option value="openai">OpenAI</option>
+                <option value="anthropic">Anthropic</option>
+              </select>
+            </label>
+            <label>
+              <span>API key</span>
+              <div class="opt-input-group">
+                <input type="password" name="aiToken" placeholder="sk-..." autocomplete="off">
+                <button type="button" class="opt-btn opt-btn--ghost" data-toggle-pw>👁️</button>
+              </div>
+            </label>
+            <div class="opt-row">
+              <button type="submit" class="opt-btn opt-btn--primary">Guardar</button>
+              <span class="opt-success" data-success></span>
+            </div>
+          </form>
+
+          <div class="opt-gen">
+            <h3>Generar lote con IA</h3>
+            <div class="opt-row">
+              <select id="opt-gen-count">
+                <option value="10">10 respuestas</option>
+                <option value="20" selected>20 respuestas</option>
+                <option value="40">40 respuestas</option>
+              </select>
+              <button type="button" class="opt-btn opt-btn--accent" id="opt-gen-btn">✨ Generar</button>
+            </div>
+            <div class="opt-gen__status" id="opt-gen-status"></div>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- ============ SESIÓN ============ -->
+      <section class="opt-card opt-card--danger">
+        <h2>Sesión</h2>
+        <p class="opt-help">Cerrar sesión elimina el token local. Tus respuestas quedan guardadas en la nube.</p>
+        <button type="button" class="opt-btn opt-btn--danger" id="opt-logout">Cerrar sesión</button>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="lib/supabase.min.js"></script>
+  <script src="config.js"></script>
+  <script src="lib/store.js"></script>
+  <script src="lib/ui.js"></script>
+  <script src="options.js"></script>
+</body>
+</html>

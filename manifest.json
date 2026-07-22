@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "Banco de Respuestas",
+  "version": "0.1.0",
+  "description": "Banco de respuestas cortas para responder comentarios en Instagram",
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Banco de Respuestas"
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+  "permissions": [
+    "storage",
+    "clipboardWrite"
+  ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["lib/supabase.min.js"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}
