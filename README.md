@@ -1,6 +1,6 @@
 # Banco de Respuestas — Extensión Chrome
 
-Extensión Chrome/Chromium para responder comentarios en Instagram con respuestas coquetas listas para copiar y pegar. Pensada para personas que administran varias cuentas de modelos.
+Extensión Chrome/Chromium que se abre como **Side Panel** (panel lateral fijo) para responder comentarios en Instagram con respuestas coquetas listas para copiar y pegar. Pensada para personas que administran varias cuentas de modelos.
 
 ## Quick start
 
@@ -9,13 +9,21 @@ Extensión Chrome/Chromium para responder comentarios en Instagram con respuesta
 3. **Cargar extensión** en `chrome://extensions/` (modo desarrollador)
 4. **Crear cuenta** y hacerte admin via SQL
 
+## Compatibilidad
+
+- ✅ **Chrome 114+** (mayo 2023) — recomendado
+- ✅ Edge 114+, Brave, Opera, Vivaldi, Arc (todos Chromium-based)
+- ❌ Firefox (no tiene Side Panel API)
+- ❌ Safari (soporte limitado)
+
 ## Estructura
 
 ```
-├── manifest.json              Permisos y config MV3
+├── manifest.json              Permisos MV3 (incluye side_panel)
+├── background.js              Service worker (openPanelOnActionClick)
 ├── config.js                  Credenciales Supabase
-├── popup.html/css/js          Interfaz principal
-├── options.html/css/js        Configuración (admin)
+├── popup.html / .css / .js    UI principal (cargada en side panel)
+├── options.html / .css / .js  Configuración (admin)
 ├── lib/
 │   ├── supabase.min.js        SDK Supabase bundled
 │   ├── emojis.js              Picker emojis custom (351 emojis)
@@ -24,13 +32,9 @@ Extensión Chrome/Chromium para responder comentarios en Instagram con respuesta
 │   ├── SETUP_COMPLETO.sql     Schema inicial (idempotente)
 │   └── RESET_TODO.sql         Wipear todo
 ├── icons/                     16/32/48/128
-└── docs/
-    ├── README.md              Overview, features, reglas de negocio
-    ├── SETUP.md               Pasos iniciales
-    ├── ARCHITECTURE.md        Estructura técnica, flujos
-    ├── CONVENTIONS.md         Reglas de respuestas + código
-    ├── DEPLOYMENT.md          Distribución + actualizaciones
-    └── CHANGELOG.md           Histórico de cambios
+├── build.ps1                  Script para generar .zip de distribución
+├── docs/                      Documentación completa
+└── dist/                      (gitignored) zips de distribución
 ```
 
 ## Documentación
@@ -41,7 +45,7 @@ Después:
 - [`docs/SETUP.md`](docs/SETUP.md) para instalar
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) para entender el código
 - [`docs/CONVENTIONS.md`](docs/CONVENTIONS.md) para las reglas de las respuestas
-- [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) para distribuir
+- [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) para distribuir y actualizar
 
 ## Reglas críticas
 
@@ -55,3 +59,25 @@ Después:
 - 1-2 emojis por respuesta
 
 Ver [`docs/CONVENTIONS.md`](docs/CONVENTIONS.md) para detalle completo.
+
+## Build
+
+```powershell
+.\build.ps1 -Version "v0.2.0"
+# Genera dist\BancoDeRespuestas-v0.2.0.zip
+```
+
+El zip queda en `dist/`, listo para subir a GitHub Releases.
+
+## Distribución
+
+Cada user:
+1. Descarga el .zip del release
+2. Descomprime en una carpeta
+3. Va a `chrome://extensions/`
+4. Activa "Modo desarrollador"
+5. Click "Cargar extensión sin empaquetar"
+6. Selecciona la carpeta descomprimida
+7. Click en el icono 💬 → abre el side panel al costado
+
+Actualizaciones: cada user descarga el nuevo .zip, reemplaza archivos, click en 🔄 Recargar en `chrome://extensions/`.
